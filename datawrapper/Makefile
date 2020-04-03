@@ -157,6 +157,21 @@ tooltips:
 	$(MAKE) tooltip M=1
 	$(MAKE) tooltip M=2
 
+pngs:
+	$(MAKE) png M=0
+	$(MAKE) png M=1
+	$(MAKE) png M=2
+
+
+png:	$(ID).png
+
+$(ID).png:
+	curl --request GET \
+	--url 'https://api.datawrapper.de/v3/charts/$(ID)/export/png?unit=px&mode=rgb&plain=false&scale=2&borderWidth=20' \
+	--header "Authorization: Bearer $(token)" \
+	--header 'accept: */*' \
+	--output '$@'
+
 #
 # https://developer.datawrapper.de/docs/creating-a-map
 #
