@@ -10,5 +10,5 @@
 ![Percentual infection of the population](foNWt.png)
 [Interactive Map](https://datawrapper.dwcdn.net/foNWt/)
 
-![Estimation of underreported infections](dUzzet.png)
+![Estimation of underreported infections](dUzze.png)
 [Interactive Map](https://datawrapper.dwcdn.net/dUzze/)
