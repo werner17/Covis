@@ -6,14 +6,28 @@ mapkey=ISO_A3
 basemap=world-2019
 mapkey=DW_NAME
 
+#
+# The map number, for multimap handling support
+#
+M=0
+
+date=$(shell date "+%e %b %Y")
 
 CountryCodeColumn=Country
-ValueColumn=doubling cases (days)
+ValueColumn0=doubling cases (days)
+ValueColumn1=doubling deaths (days)
+ValueColumn2=prct pop 1% mort
+ValueColumn=$(ValueColumn$M)
 
-maptitle=Experimental Map Visualization
+maptitle0=Covid-19 Case Confirmation Doubling Rate for $(date)
+maptitle1=Covid-19 Death Doubling Rate for $(date)
+maptitle2=Covid-19 population infection for $(date)
+maptitle=$(maptitle$M)
+
+
 sourcename=Valeriu Predoi Data Analysis
 sourceurl=https://github.com/valeriupredoi/COVID-19_LINEAR/
-intro=Data Analysis of public COVID data
+intro=Data Analysis of public COVID data - NO WARRANTY
 
 
 #
@@ -25,17 +39,23 @@ intro=Data Analysis of public COVID data
 # "literacy_rate": "literacy-rate"
 #
 
-tooltiptitle=Key data for {{ Country }}
+tooltiptitle=Covid-19 data for {{ country_name }}
 
 define	tooltipbody
-Reported cases are doubling in {{ doubling_cases__days_ }} days, deaths doubling in {{ doubling_deaths__days_ }} days (the more the better).
+Reported cases are doubling in {{ doubling_cases__days_ }} days, with current daily increase of {{ case_rate }}%.
 
-Current case rate {{ case_rate__day_1_ }}, death rate {{ death_rate__day_1_ }}.
 
-Predicted daily cases for simulated mortality based on reported deaths:
-{{ X0_5__mort_sim_cases }} at 0.5%,
-{{ X1__mort_sim_cases }}   at 1.0%,
-{{ X2__mort_sim_cases }}   at 2.0%
+
+Deaths are doubling in {{ doubling_deaths__days_ }} days (the more the better) with daily increase of {{ death_rate }}%.
+
+
+
+{{ country_name }} reported {{ cases }} known cases so far. However, at a mortality of 1% the number of reported deaths would imply {{ X1__mort_sim_cases }} actual cases, considering an average delay of 20 days from infection reporting to death.
+
+
+
+If that is true, then {{ prct_pop_1__mort }}% of the population in {{ country_name }} already had Covid-19 and only
+{{ prct_rep_cases_1__mort }}% cases have been reported yet.
 
 endef
 
@@ -56,14 +76,18 @@ define	tooltipfieldsx
 , "2% mort sim cases": "X2__mort_sim_cases"
 endef
 
-valeriu=https://github.com/valeriupredoi/COVID-19_LINEAR/blob/master/ALL_COUNTRIES_DATA_31-03-2020.csv
-valeriu=https://raw.githubusercontent.com/valeriupredoi/COVID-19_LINEAR/master/ALL_COUNTRIES_DATA_31-03-2020.csv
-valeriu=https://raw.githubusercontent.com/valeriupredoi/COVID-19_LINEAR/master/REDUCED_DATA.csv
+#valeriu=https://github.com/valeriupredoi/COVID-19_LINEAR/blob/master/ALL_COUNTRIES_DATA_31-03-2020.csv
+#valeriu=https://raw.githubusercontent.com/valeriupredoi/COVID-19_LINEAR/master/ALL_COUNTRIES_DATA_31-03-2020.csv
+#valeriu=https://raw.githubusercontent.com/valeriupredoi/COVID-19_LINEAR/master/REDUCED_DATA.csv
+#valeriu=https://raw.githubusercontent.com/valeriupredoi/COVID-19_LINEAR/master/ALL_COUNTRIES_DATA_31-03-2020.csv
+
+date=31 Mar 2020
 
 #
 # ID is provided by the create-map target
 #
 include id.inc
+ID=$(ID$M)
 
 define	help
 1. $(MAKE) create-map
@@ -78,14 +102,60 @@ define	help
 4. $(MAKE) description
    -> adds description metadata to the map
 
+Data update via:
+  rm result.csv;  $(MAKE) result.csv
+
 endef
 
 help:
 	$(info $(help))
 
+
+update:
+	rm currentdata.inc
+	$(MAKE) currentdata.inc
+	$(MAKE) update-data
+
+update-data:
+	rm result.csv
+	$(MAKE) result.csv
+	$(MAKE) all-data
+
+
+include currentdata.inc
+
+currentdata.inc:
+	-rm $@
+	wget https://raw.githubusercontent.com/valeriupredoi/COVID-19_LINEAR/master/country_tables/currentdata.inc
+
 ifndef	ID
 create-map-because-no-id: create-map
 endif
+
+publish-all:
+	$(MAKE) publish M=0
+	$(MAKE) publish M=1
+	$(MAKE) publish M=2
+
+all-data:
+	$(MAKE) data M=0
+	$(MAKE) data M=1
+	$(MAKE) data M=2
+
+descriptions:
+	$(MAKE) description M=0
+	$(MAKE) description M=1
+	$(MAKE) description M=2
+
+titles:
+	$(MAKE) title M=0
+	$(MAKE) title M=1
+	$(MAKE) title M=2
+
+tooltips:
+	$(MAKE) tooltip M=0
+	$(MAKE) tooltip M=1
+	$(MAKE) tooltip M=2
 
 #
 # https://developer.datawrapper.de/docs/creating-a-map
@@ -99,8 +169,8 @@ data: | id.inc token.inc
 	$(info Data have been successfully uploaded, do "makemap" now.)
 
 result.csv:
-	wget $(valeriu)
-	mv $(notdir $(valeriu)) $@
+	wget $(url)
+	mv $(notdir $(url)) $@
 
 
 makemap: | id.inc token.inc
@@ -117,6 +187,18 @@ description: | id.inc token.inc
 	--header 'Authorization: Bearer $(token)' \
 	--header 'content-type: application/json' \
   --data-binary '{ "metadata": { "describe": { "source-name": "$(sourcename)", "source-url": "$(sourceurl)", "intro": "$(intro)" } } }'
+
+title: | id.inc token.inc
+	curl  --request PATCH \
+	--url https://api.datawrapper.de/v3/charts/$(ID) \
+	--header 'Authorization: Bearer $(token)' \
+	--header 'content-type: application/json' \
+	--data '{ "title": "$(maptitle)" }'
+
+publish: | id.inc token.inc
+	curl --request POST \
+	--url https://api.datawrapper.de/charts/$(ID)/publish \
+	--header 'Authorization: Bearer $(token)'
 
 
 define \n
