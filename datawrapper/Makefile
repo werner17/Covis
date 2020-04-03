@@ -14,20 +14,22 @@ M=0
 date=$(shell date "+%e %b %Y")
 
 CountryCodeColumn=Country
-ValueColumn0=doubling cases (days)
-ValueColumn1=doubling deaths (days)
-ValueColumn2=prct pop 1% mort
-ValueColumn=$(ValueColumn$M)
+ValueColumn.0=doubling cases (days)
+ValueColumn.1=doubling deaths (days)
+ValueColumn.2=prct pop 1% mort
+ValueColumn.3=prct rep cases 1% mort
+ValueColumn=$(ValueColumn.$M)
 
-maptitle0=Covid-19 Case Confirmation Doubling Rate for $(date)
-maptitle1=Covid-19 Death Doubling Rate for $(date)
-maptitle2=Covid-19 population infection for $(date)
-maptitle=$(maptitle$M)
+maptitle.0=Covid-19 Spreading: Case Confirmation Doubling Rate for $(date)
+maptitle.1=Covid-19 Spreading: Death Doubling Rate for $(date)
+maptitle.2=Covid-19 Towards Herd Immunity: Population Infection for $(date)
+maptitle.3=Covid-19 Testing Quality: Percentage of Reported Cases out of all Infections on $(date)
+maptitle=$(maptitle.$M)
 
 
-sourcename=Valeriu Predoi Data Analysis
+sourcename=VP Data Analysis
 sourceurl=https://github.com/valeriupredoi/COVID-19_LINEAR/
-intro=Data Analysis of public COVID data - NO WARRANTY
+intro=Data Analysis & Simulation based off public COVID data - NO WARRANTY! Interpret with caution!
 
 
 #
@@ -65,15 +67,24 @@ endef
 # From
 #  head -1 result.csv
 #
-define	tooltipfieldsx
-  "Country": "country"
-, "case rate (day-1)": "case_rate__day_1_"
-, "death rate (day-1)": "death_rate__day_1_"
-, "doubling cases (days)": "doubling_cases__days_"
-, "doubling deaths (days)": "doubling_deaths__days_"
-, "0.5% mort sim cases": "X0_5__mort_sim_cases"
-, "1% mort sim cases": "X1__mort_sim_cases"
-, "2% mort sim cases": "X2__mort_sim_cases"
+define	tooltipfields
+"case_rate": "case rate",
+"cases": "cases",
+"Country": "Country",
+"country_name": "country-name",
+"death_rate": "death rate",
+"deaths": "deaths",
+"doubling_cases__days_": "doubling cases (days)",
+"doubling_deaths__days_": "doubling deaths (days)",
+"pct_pop_0_5__mort": "pct pop 0.5% mort",
+"prct_pop_1__mort": "prct pop 1% mort",
+"prct_pop_2__mort": "prct pop 2% mort",
+"prct_rep_cases_0_5__mort": "prct rep cases 0.5% mort",
+"prct_rep_cases_1__mort": "prct rep cases 1% mort",
+"prct_rep_cases_2__mort": "prct rep cases 2% mort",
+"X0_5__mort_sim_cases": "0.5% mort sim cases",
+"X1__mort_sim_cases": "1% mort sim cases",
+"X2__mort_sim_cases": "2% mort sim cases"
 endef
 
 #valeriu=https://github.com/valeriupredoi/COVID-19_LINEAR/blob/master/ALL_COUNTRIES_DATA_31-03-2020.csv
@@ -87,11 +98,15 @@ date=31 Mar 2020
 # ID is provided by the create-map target
 #
 include id.inc
-ID=$(ID$M)
+ID=$(ID.$M)
 
 define	help
+
+Operations PER map:
+
 1. $(MAKE) create-map
   -> check the ID as output from this command, and place it in the file id.inc .
+  -> to add support for another map, add the ID to the list there.
 
 2. $(MAKE) data
   -> uploads the provided .csv file
@@ -136,41 +151,49 @@ publish-all:
 	$(MAKE) publish M=0
 	$(MAKE) publish M=1
 	$(MAKE) publish M=2
+	$(MAKE) publish M=3
 
 all-data:
 	$(MAKE) data M=0
 	$(MAKE) data M=1
 	$(MAKE) data M=2
+	$(MAKE) data M=3
 
 descriptions:
 	$(MAKE) description M=0
 	$(MAKE) description M=1
 	$(MAKE) description M=2
+	$(MAKE) description M=3
 
 titles:
 	$(MAKE) title M=0
 	$(MAKE) title M=1
 	$(MAKE) title M=2
+	$(MAKE) title M=3
 
 tooltips:
 	$(MAKE) tooltip M=0
 	$(MAKE) tooltip M=1
 	$(MAKE) tooltip M=2
+	$(MAKE) tooltip M=3
 
 pngs:
 	$(MAKE) png M=0
 	$(MAKE) png M=1
 	$(MAKE) png M=2
+	$(MAKE) png M=3
 
 
 png:	$(ID).png
 
-$(ID).png:
+$(ID).png: png.$M
+
+png.%: result.csv id.inc Makefile
 	curl --request GET \
-	--url 'https://api.datawrapper.de/v3/charts/$(ID)/export/png?unit=px&mode=rgb&plain=false&scale=2&borderWidth=20' \
+	--url 'https://api.datawrapper.de/v3/charts/$(ID$(suffix $@))/export/png?unit=px&mode=rgb&plain=false&scale=2&borderWidth=20' \
 	--header "Authorization: Bearer $(token)" \
 	--header 'accept: */*' \
-	--output '$@'
+	--output '$(ID$(suffix $@)).png'
 
 #
 # https://developer.datawrapper.de/docs/creating-a-map
@@ -203,16 +226,38 @@ description: | id.inc token.inc
 	--header 'content-type: application/json' \
   --data-binary '{ "metadata": { "describe": { "source-name": "$(sourcename)", "source-url": "$(sourceurl)", "intro": "$(intro)" } } }'
 
-title: | id.inc token.inc
+title: title.$M
+
+title.%: | id.inc token.inc
+	$(info updating title for map $(suffix $@))
 	curl  --request PATCH \
-	--url https://api.datawrapper.de/v3/charts/$(ID) \
+	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
 	--header 'Authorization: Bearer $(token)' \
 	--header 'content-type: application/json' \
-	--data '{ "title": "$(maptitle)" }'
+	--data '{ "title": "$(maptitle$(suffix $@))" }'
+
+
+chart-height=450
+embed-height=600
+embed-width=1024
+
+size.%: | id.inc token.inc
+	$(info updating title for map $(suffix $@))
+	curl  --request PATCH \
+	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
+	--header 'Authorization: Bearer $(token)' \
+	--header 'content-type: application/json' \
+	--data '{ "metadata": {  "publish": { "chart-height": $(chart-height), "embed-height": $(embed-height), "embed-width": $(embed-width) } } }'
+
 
 publish: | id.inc token.inc
 	curl --request POST \
 	--url https://api.datawrapper.de/charts/$(ID)/publish \
+	--header 'Authorization: Bearer $(token)'
+
+publish.%: | id.inc token.inc
+	curl --request POST \
+	--url https://api.datawrapper.de/charts/$(ID$(suffix $@))/publish \
 	--header 'Authorization: Bearer $(token)'
 
 
@@ -224,13 +269,28 @@ endef
 curl.tooltipbody=$(subst ${\n},\n,$(tooltipbody))
 curl.tooltipfields=$(subst ${\n},,$(tooltipfields))
 
-tooltip:  | id.inc token.inc
+tooltip:  tooltip.$M
+
+tooltip.%:  | id.inc token.inc
 	curl  --request PATCH \
-	--url https://api.datawrapper.de/v3/charts/$(ID) \
+	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
 	--header 'Authorization: Bearer  $(token)' \
 	--header 'content-type: application/json' \
   --data-binary '{"metadata": { "visualize": { "tooltip": {"body": "$(curl.tooltipbody)", "title": "$(tooltiptitle)", "fields": { $(curl.tooltipfields) } } } } }'
 
+maptype.%:  | id.inc token.inc
+	curl  --request PATCH \
+	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
+	--header 'Authorization: Bearer  $(token)' \
+	--header 'content-type: application/json' \
+	--data-binary '{ "type": "d3-maps-choropleth" }'
+
+external-url.%:  | id.inc token.inc
+	curl  --request PATCH \
+	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
+	--header 'Authorization: Bearer  $(token)' \
+	--header 'content-type: application/json' \
+	--data-binary '{ "externalData": "$(url)" }'
 
 viz:
 	$(info https://app.datawrapper.de/map/$(ID)/visualize)
