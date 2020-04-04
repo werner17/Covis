@@ -20,10 +20,10 @@ ValueColumn.2=prct pop 1% mort
 ValueColumn.3=prct rep cases 1% mort
 ValueColumn=$(ValueColumn.$M)
 
-maptitle.0=Covid-19 Spreading: Case Confirmation Doubling Rate for $(date)
-maptitle.1=Covid-19 Spreading: Death Doubling Rate for $(date)
-maptitle.2=Covid-19 Towards Herd Immunity: Population Infection for $(date)
-maptitle.3=Covid-19 Testing Quality: Percentage of Reported Cases out of all Infections on $(date)
+maptitle.0=Covis19 1/4 - Spreading: Confirmation Doubling Rate for $(date)
+maptitle.1=Covis19 2/4 - Spreading: Death Doubling Rate for $(date)
+maptitle.2=Covis19 3/4 - Towards Herd Immunity: Infected Population Percentage for $(date)
+maptitle.3=Covis19 4/4 - Testing Coverage: Estimated Underreporting for $(date)
 maptitle=$(maptitle.$M)
 
 
@@ -229,7 +229,7 @@ description: | id.inc token.inc
 title: title.$M
 
 title.%: | id.inc token.inc
-	$(info updating title for map $(suffix $@))
+	$(info updating title for map$(suffix $@))
 	curl  --request PATCH \
 	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
 	--header 'Authorization: Bearer $(token)' \
