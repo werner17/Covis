@@ -31,7 +31,7 @@ note=Data for $(date).
 notes.0=$(note)
 notes.1=$(note)
 notes.2=$(note)
-notes.3=$(note)
+notes.3=$(note) Low values probably mean only severe cases have been tested. High values indicate a broader sampling of testing also including many healthy candidates (always subject to statistical deviations due to low sampling in particular).
 
 
 
@@ -225,9 +225,11 @@ makemap: | id.inc token.inc
 	--data-binary \
   '{ "metadata": { "axes": { "keys": "$(CountryCodeColumn)", "values": "$(ValueColumn)" }, "visualize": { "basemap": "$(basemap)", "map-key-attr": "$(mapkey)" } }  }'
 
-description: | id.inc token.inc
+description: description.$M
+
+description.%: | id.inc token.inc
 	curl  --request PATCH \
-	--url https://api.datawrapper.de/v3/charts/$(ID) \
+	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
 	--header 'Authorization: Bearer $(token)' \
 	--header 'content-type: application/json' \
   --data-binary '{ "metadata": { "describe": { "source-name": "$(sourcename)", "source-url": "$(sourceurl)", "intro": "$(intro)" } } }'
