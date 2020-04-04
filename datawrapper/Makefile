@@ -27,17 +27,19 @@ maptitle.3=Covis19 4/4 - Testing Coverage: Estimated Underreporting
 maptitle=$(maptitle.$M)
 
 
-note=Data for $(date).
+note=Data for $(date) - Analysis & Simulation based on publicly available COVID data - NO WARRANTY! Interpret with caution! All data come with high statistical varations! Estimates are based on 1% mortality hypothesis and assuming 20 days average delay from infection report to fatality.
 notes.0=$(note)
 notes.1=$(note)
 notes.2=$(note)
-notes.3=$(note) Low values probably mean only severe cases have been tested. High values indicate a broader sampling of testing also including many healthy candidates (always subject to statistical deviations due to low sampling in particular).
-
+notes.3=$(note)
 
 
 sourcename=VP Data Analysis
 sourceurl=https://github.com/valeriupredoi/COVID-19_LINEAR/
-intro=Data Analysis & Simulation based off public COVID data - NO WARRANTY! Interpret with caution!
+intro.0=Infinite doubling time means R=1, i.e. one infectious person can transmit the disease to one other person. The longer the better.
+intro.1=Reported diseases are expected to have higher reliability than test results since more likely all deaths are recorded than all infections.
+intro.2=Epidemics modelling assumes herd immunity is achieved at 60% infection rate. Countries that suffer most may achieve this status earlier.
+intro.3=Low values probably mean only severe cases have been tested. High values indicate a broader sampling of testing also including many healthy candidates (always subject to statistical deviations due to low sampling in particular).
 
 
 #
@@ -155,6 +157,8 @@ ifndef	ID
 create-map-because-no-id: create-map
 endif
 
+MAPS=0 1 2 3
+
 publish-all:
 	$(MAKE) publish M=0
 	$(MAKE) publish M=1
@@ -168,21 +172,15 @@ all-data:
 	$(MAKE) data M=3
 
 descriptions:
-	$(MAKE) description M=0
-	$(MAKE) description M=1
-	$(MAKE) description M=2
-	$(MAKE) description M=3
+	$(MAKE) -j $(addprefix description.,$(MAPS))
 
 titles:
-	$(MAKE) title.0 title.1 title.2 title.3 -j
+	$(MAKE) -j $(addprefix title.,$(MAPS))
 
 tooltips:
-	$(MAKE) tooltip M=0
-	$(MAKE) tooltip M=1
-	$(MAKE) tooltip M=2
-	$(MAKE) tooltip M=3
+	$(MAKE) -j $(addprefix tooltip.,$(MAPS))
 
-all-notes:
+notes:
 	$(MAKE) notes.0 notes.1 notes.2 notes.3 -j
 
 
@@ -232,7 +230,7 @@ description.%: | id.inc token.inc
 	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
 	--header 'Authorization: Bearer $(token)' \
 	--header 'content-type: application/json' \
-  --data-binary '{ "metadata": { "describe": { "source-name": "$(sourcename)", "source-url": "$(sourceurl)", "intro": "$(intro)" } } }'
+  --data-binary '{ "metadata": { "describe": { "source-name": "$(sourcename)", "source-url": "$(sourceurl)", "intro": "$(intro$(suffix $@))" } } }'
 
 title: title.$M
 
@@ -244,7 +242,7 @@ title.%: | id.inc token.inc
 	--header 'content-type: application/json' \
 	--data '{ "title": "$(maptitle$(suffix $@))" }'
 
-notes: notes.$M
+note: notes.$M
 notes.%: | id.inc token.inc
 	$(info updating notes for map$(suffix $@))
 	curl  --request PATCH \

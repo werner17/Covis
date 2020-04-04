@@ -1,3 +1,4 @@
+[Mathematical Model](https://github.com/valeriupredoi/COVID-19_LINEAR/blob/master/Mathematical_Model.md)
 
 
 
