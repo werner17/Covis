@@ -20,11 +20,19 @@ ValueColumn.2=prct pop 1% mort
 ValueColumn.3=prct rep cases 1% mort
 ValueColumn=$(ValueColumn.$M)
 
-maptitle.0=Covis19 1/4 - Spreading: Confirmation Doubling Rate for $(date)
-maptitle.1=Covis19 2/4 - Spreading: Death Doubling Rate for $(date)
-maptitle.2=Covis19 3/4 - Towards Herd Immunity: Infected Population Percentage for $(date)
-maptitle.3=Covis19 4/4 - Testing Coverage: Estimated Underreporting for $(date)
+maptitle.0=Covis19 1/4 - Spreading: Confirmation Doubling Rate
+maptitle.1=Covis19 2/4 - Spreading: Death Doubling Rate
+maptitle.2=Covis19 3/4 - Towards Herd Immunity: Infected Portion
+maptitle.3=Covis19 4/4 - Testing Coverage: Estimated Underreporting
 maptitle=$(maptitle.$M)
+
+
+note=Data for $(date).
+notes.0=$(note)
+notes.1=$(note)
+notes.2=$(note)
+notes.3=$(note)
+
 
 
 sourcename=VP Data Analysis
@@ -166,10 +174,7 @@ descriptions:
 	$(MAKE) description M=3
 
 titles:
-	$(MAKE) title M=0
-	$(MAKE) title M=1
-	$(MAKE) title M=2
-	$(MAKE) title M=3
+	$(MAKE) title.0 title.1 title.2 title.3 -j
 
 tooltips:
 	$(MAKE) tooltip M=0
@@ -177,11 +182,12 @@ tooltips:
 	$(MAKE) tooltip M=2
 	$(MAKE) tooltip M=3
 
+all-notes:
+	$(MAKE) notes.0 notes.1 notes.2 notes.3 -j
+
+
 pngs:
-	$(MAKE) png M=0
-	$(MAKE) png M=1
-	$(MAKE) png M=2
-	$(MAKE) png M=3
+	$(MAKE) png.0 png.1 png.2 png.3 -j
 
 
 png:	$(ID).png
@@ -235,6 +241,15 @@ title.%: | id.inc token.inc
 	--header 'Authorization: Bearer $(token)' \
 	--header 'content-type: application/json' \
 	--data '{ "title": "$(maptitle$(suffix $@))" }'
+
+notes: notes.$M
+notes.%: | id.inc token.inc
+	$(info updating notes for map$(suffix $@))
+	curl  --request PATCH \
+	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
+	--header 'Authorization: Bearer $(token)' \
+	--header 'content-type: application/json' \
+	--data '{ "metadata": { "annotate": { "notes": "$(notes$(suffix $@))"} } }'
 
 
 chart-height=450
