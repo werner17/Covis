@@ -36,7 +36,7 @@ notes.3=$(note)
 
 sourcename=VP Data Analysis
 sourceurl=https://github.com/valeriupredoi/COVID-19_LINEAR/
-intro.0=Infinite doubling time means R=1, i.e. one infectious person can transmit the disease to one other person. The longer the better.
+intro.0=R=1 (one infectious person can transmit the disease to one other person) is achieved when the doubling time is equal to the infectious period, currently assumed to be 14 days. The longer the doubling time per country, the smaller R.
 intro.1=Reported diseases are expected to have higher reliability than test results since more likely all deaths are recorded than all infections.
 intro.2=Epidemics modelling assumes herd immunity is achieved at 60% infection rate. Countries that suffer most may achieve this status earlier. Note that this estimated portion is based on the current death rate. If that one shrinks over time, then the estimated portion will be smaller.
 intro.3=Low values probably mean only severe cases have been tested. High values indicate a broader sampling of testing also including many healthy candidates (always subject to statistical deviations due to low sampling in particular).
