@@ -165,11 +165,8 @@ publish-all:
 	$(MAKE) publish M=2
 	$(MAKE) publish M=3
 
-all-data:
-	$(MAKE) data M=0
-	$(MAKE) data M=1
-	$(MAKE) data M=2
-	$(MAKE) data M=3
+all-data datas data-all:
+	$(MAKE) -j $(addprefix data.,$(MAPS))
 
 descriptions:
 	$(MAKE) -j $(addprefix description.,$(MAPS))
@@ -202,9 +199,11 @@ png.%: result.csv id.inc Makefile
 #
 # https://developer.datawrapper.de/docs/creating-a-map
 #
-data: | id.inc token.inc
+data: data.$M
+
+data.%: | id.inc token.inc
 	curl --request PUT \
-	--url https://api.datawrapper.de/v3/charts/$(ID)/data \
+	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@))/data \
 	--header 'Authorization: Bearer $(token)' \
 	--header 'content-type: text/csv' \
 	--data-binary @result.csv
