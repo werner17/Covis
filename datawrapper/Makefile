@@ -27,7 +27,7 @@ maptitle.3=Covis19 4/4 - Testing Coverage: Estimated Underreporting
 maptitle=$(maptitle.$M)
 
 
-note=Data for $(date) - Analysis & Simulation based on publicly available COVID data - NO WARRANTY! Interpret with caution! All data come with high statistical varations! Estimates are based on 1% mortality hypothesis and assuming 20 days average delay from infection report to fatality.
+note=Data for $(date) - Analysis & Simulation based on publicly available COVID data - NO WARRANTY! Interpret with caution! All data come with high statistical variations! Estimates are based on 1% mortality hypothesis and assuming 20 days average delay from infection report to fatality.
 notes.0=$(note)
 notes.1=$(note)
 notes.2=$(note)
@@ -38,7 +38,7 @@ sourcename=VP Data Analysis
 sourceurl=https://github.com/valeriupredoi/COVID-19_LINEAR/
 intro.0=Infinite doubling time means R=1, i.e. one infectious person can transmit the disease to one other person. The longer the better.
 intro.1=Reported diseases are expected to have higher reliability than test results since more likely all deaths are recorded than all infections.
-intro.2=Epidemics modelling assumes herd immunity is achieved at 60% infection rate. Countries that suffer most may achieve this status earlier.
+intro.2=Epidemics modelling assumes herd immunity is achieved at 60% infection rate. Countries that suffer most may achieve this status earlier. Note that this estimated portion is based on the current death rate. If that one shrinks over time, then the estimated portion will be smaller.
 intro.3=Low values probably mean only severe cases have been tested. High values indicate a broader sampling of testing also including many healthy candidates (always subject to statistical deviations due to low sampling in particular).
 
 
