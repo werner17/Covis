@@ -4,7 +4,10 @@ basemap=europe
 mapkey=ISO_A3
 
 basemap=world-2019
+# country code
 mapkey=DW_NAME
+# isocodes
+mapkey=DW_STATE_CODE
 
 #
 # The map number, for multimap handling support
@@ -20,7 +23,7 @@ ValueColumn.2=prct pop 1% mort
 ValueColumn.3=prct rep cases 1% mort
 ValueColumn=$(ValueColumn.$M)
 
-maptitle.0=Covis19 1/4 - Spreading: Confirmation Doubling Rate
+maptitle.0=Covis19 1/4 - Spreading: Confirmed Case Doubling Rate
 maptitle.1=Covis19 2/4 - Spreading: Death Doubling Rate
 maptitle.2=Covis19 3/4 - Towards Herd Immunity: Infected Portion
 maptitle.3=Covis19 4/4 - Testing Coverage: Estimated Underreporting
@@ -216,6 +219,8 @@ result.csv:
 	mv $(notdir $(url)) $@
 
 
+maptype="basemap": "$(basemap)", "map-key-attr": "$(mapkey)"
+
 makemap: | id.inc token.inc
 	curl  --request PATCH \
 	--url https://api.datawrapper.de/v3/charts/$(ID) \
@@ -251,6 +256,41 @@ notes.%: | id.inc token.inc
 	--header 'Authorization: Bearer $(token)' \
 	--header 'content-type: application/json' \
 	--data '{ "metadata": { "annotate": { "notes": "$(notes$(suffix $@))"} } }'
+
+
+define colors.0
+"gradient":{
+"stops":[{"p":0,"v":2.0},{"p":0.2,"v":3.0},{"p":0.4,"v":4.0},{"p":0.6,"v":7.0},{"p":0.8,"v":14.0},{"p":1,"v":24.0}],
+"colors":[{"c":"#201010","p":0},
+          {"c":"#a01010","p":0.2},
+          {"c":"#ff3000","p":0.4},
+          {"c":"#e0d050","p":0.6},
+          {"c":"#f8f8e0","p":0.8},
+          {"c":"#41c600","p":1}],
+"domain":[0,0.1,0.3,0.8,1]
+},
+"map-key-title": "Days of case doubling",
+"map-key-auto": false,
+"map-key-format": ".1f",
+"map-key-position": "bl",
+"map-key-stops": "3,3 days, R>>>1\n
+4,4 days, R>>1\n
+7,1 week, R>1\n
+14,2 weeks, R=1\n
+27,3 weeks, R<1
+"
+endef
+
+colors.%:  | id.inc token.inc
+	curl  --request PATCH \
+	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
+	--header 'Authorization: Bearer  $(token)' \
+	--header 'content-type: application/json' \
+ --data-binary $(subst ${\n},,'{"metadata": { "visualize": { $(maptype), $(colors$(suffix $@)) } } } ')
+
+
+ # --data-binary '{"metadata": { "axes": { "visualize": { $(maptype) } } } } '
+
 
 
 chart-height=450
