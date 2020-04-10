@@ -65,7 +65,7 @@ Deaths are doubling in {{ doubling_deaths__days_ }} days (the more the better) w
 
 
 
-{{ country_name }} reported {{ cases }} known cases so far. However, at a mortality of 1% the number of reported deaths would imply {{ X1__mort_sim_cases }} actual cases, considering an average delay of 14 days from infection reporting to death.
+{{ country_name }} reported {{ cases }} known cases so far. However, at a mortality of 2% the number of reported deaths would imply {{ X1__mort_sim_cases }} actual cases, considering an average delay of 14 days from infection reporting to death.
 
 
 
@@ -255,7 +255,7 @@ notes.%: | id.inc token.inc
 	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
 	--header 'Authorization: Bearer $(token)' \
 	--header 'content-type: application/json' \
-	--data '{ "metadata": { "annotate": { "notes": "$(notes$(suffix $@))"} } }'
+	--data '{ "metadata": { "annotate": { "notes": "$(notes$(suffix $@))"} }, "externalData":null }'
 
 
 define colors.0
@@ -346,7 +346,7 @@ external-url.%:  | id.inc token.inc
 	--url https://api.datawrapper.de/v3/charts/$(ID$(suffix $@)) \
 	--header 'Authorization: Bearer  $(token)' \
 	--header 'content-type: application/json' \
-	--data-binary '{ "externalData": "$(url)" }'
+	--data-binary '{ "externalData": "$(url)", "upload-method":"external-data" }'
 
 viz:
 	$(info https://app.datawrapper.de/map/$(ID)/visualize)
