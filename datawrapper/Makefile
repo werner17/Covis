@@ -19,8 +19,8 @@ date=$(shell date "+%e %b %Y")
 CountryCodeColumn=Country
 ValueColumn.0=doubling cases (days)
 ValueColumn.1=doubling deaths (days)
-ValueColumn.2=prct pop 1% mort
-ValueColumn.3=prct rep cases 1% mort
+ValueColumn.2=prct pop 2% mort
+ValueColumn.3=prct rep cases 2% mort
 ValueColumn=$(ValueColumn.$M)
 
 maptitle.0=Covis19 1/4 - Spreading: Confirmed Case Doubling Rate
@@ -30,7 +30,7 @@ maptitle.3=Covis19 4/4 - Testing Coverage: Estimated Underreporting
 maptitle=$(maptitle.$M)
 
 
-note=Data for $(date) - Analysis & Simulation based on publicly available COVID data - NO WARRANTY! Interpret with caution! All data come with high statistical variations! Estimates are based on 1% mortality hypothesis and assuming 20 days average delay from infection report to fatality.
+note=Data for $(date) - Analysis & Simulation based on publicly available COVID data - NO WARRANTY! Interpret with caution! All data come with high statistical variations! Estimates are based on 2% mortality hypothesis and assuming 14 days average delay from infection report to fatality.
 notes.0=$(note)
 notes.1=$(note)
 notes.2=$(note)
@@ -65,12 +65,12 @@ Deaths are doubling in {{ doubling_deaths__days_ }} days (the more the better) w
 
 
 
-{{ country_name }} reported {{ cases }} known cases so far. However, at a mortality of 1% the number of reported deaths would imply {{ X1__mort_sim_cases }} actual cases, considering an average delay of 20 days from infection reporting to death.
+{{ country_name }} reported {{ cases }} known cases so far. However, at a mortality of 1% the number of reported deaths would imply {{ X1__mort_sim_cases }} actual cases, considering an average delay of 14 days from infection reporting to death.
 
 
 
-If that is true, then {{ prct_pop_1__mort }}% of the population in {{ country_name }} already had Covid-19 and only
-{{ prct_rep_cases_1__mort }}% cases have been reported yet.
+If that is true, then {{ prct_pop_2__mort }}% of the population in {{ country_name }} already had Covid-19 and only
+{{ prct_rep_cases_2__mort }}% cases have been reported yet.
 
 endef
 
