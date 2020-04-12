@@ -115,6 +115,10 @@ ID=$(ID.$M)
 
 define	help
 
+Fetch new data, process & publish them:
+
+    $(MAKE) update
+
 Operations PER map:
 
 1. $(MAKE) create-map
@@ -144,7 +148,7 @@ update:
 	$(MAKE) currentdata.inc
 	$(MAKE) update-data
 	$(MAKE) descriptions notes -j
-	$(MAKE) pngs
+	$(MAKE) pngs publish-all -j
 
 update-data:
 	rm result.csv
@@ -165,6 +169,9 @@ endif
 MAPS=0 1 2 3
 
 publish-all:
+	$(MAKE) -j $(addprefix publish.,$(MAPS))
+
+x:
 	$(MAKE) publish M=0
 	$(MAKE) publish M=1
 	$(MAKE) publish M=2
