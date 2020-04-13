@@ -72,6 +72,8 @@ Deaths are doubling in {{ doubling_deaths__days_ }} days (the more the better) w
 If that is true, then {{ prct_pop_2__mort }}% of the population in {{ country_name }} already had Covid-19 and only
 {{ prct_rep_cases_2__mort }}% cases have been reported yet.
 
+At 1% mortality and 10d delay, that is{{ prct_pop_1__mort__10d_ }}%, with 20 days delay {{ prct_pop_1__mort__20d_ }}. For 0.5% mortality, it is {{ pct_pop_0_5__mort__10d_ }} (10days) and {{ prct_pop_2___20d_ }} (20 days).
+
 endef
 
 
@@ -97,7 +99,13 @@ define	tooltipfields
 "prct_rep_cases_2__mort": "prct rep cases 2% mort",
 "X0_5__mort_sim_cases": "0.5% mort sim cases",
 "X1__mort_sim_cases": "1% mort sim cases",
-"X2__mort_sim_cases": "2% mort sim cases"
+"X2__mort_sim_cases": "2% mort sim cases",
+"prct_pop_2___10d_": "prct pop 2% (10d)",
+"prct_pop_2___20d_": "prct pop 2% (20d)",
+"prct_pop_1__mort__10d_": "prct pop 1% mort (10d)",
+"prct_pop_1__mort__20d_": "prct pop 1% mort (20d)",
+"pct_pop_0_5__mort__10d_": "pct pop 0.5% mort (10d)",
+"pct_pop_0_5__mort__20d_": "pct pop 0.5% mort (20d)"
 endef
 
 #valeriu=https://github.com/valeriupredoi/COVID-19_LINEAR/blob/master/ALL_COUNTRIES_DATA_31-03-2020.csv
