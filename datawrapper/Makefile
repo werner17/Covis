@@ -65,14 +65,16 @@ Deaths are doubling in {{ doubling_deaths__days_ }} days (the more the better) w
 
 
 
-{{ country_name }} reported {{ cases }} known cases so far. However, at a mortality of 2% the number of reported deaths would imply {{ X1__mort_sim_cases }} actual cases, considering an average delay of 14 days from infection reporting to death.
+{{ country_name }} reported {{ cases }} known cases so far. However, at a mortality of 2% the number of reported deaths ({{ deaths }}) would imply {{ X1__mort_sim_cases }} actual cases, considering an average delay of 14 days from infection reporting to death.
 
 
 
 If that is true, then {{ prct_pop_2__mort }}% of the population in {{ country_name }} already had Covid-19 and only
 {{ prct_rep_cases_2__mort }}% cases have been reported yet.
 
-At 1% mortality and 10d delay, that is{{ prct_pop_1__mort__10d_ }}%, with 20 days delay {{ prct_pop_1__mort__20d_ }}. For 0.5% mortality, it is {{ pct_pop_0_5__mort__10d_ }} (10days) and {{ prct_pop_2___20d_ }} (20 days).
+
+
+At 1% mortality and assuming 10d delay, {{ prct_pop_1__mort__10d_ }}% are infected already, with 20 days delay it would be {{ prct_pop_1__mort__20d_ }}%. In case of 0.5% mortality, that is {{ pct_pop_0_5__mort__10d_ }}% and {{ prct_pop_2___20d_ }}%, for  10 or 20 days delay.
 
 endef
 
