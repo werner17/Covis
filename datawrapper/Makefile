@@ -161,7 +161,7 @@ update:
 	$(MAKE) pngs publish-all -j
 
 update-data:
-	rm result.csv
+	-rm result.csv
 	$(MAKE) result.csv
 	$(MAKE) all-data
 
@@ -233,7 +233,7 @@ data.%: | id.inc token.inc
 
 result.csv:
 	wget $(url)
-	mv $(notdir $(url)) $@
+	cp $(notdir $(url)) $@
 
 
 maptype="basemap": "$(basemap)", "map-key-attr": "$(mapkey)"
@@ -394,3 +394,8 @@ create-map: | token.inc
 	--header 'content-type: application/json' \
 	--data '{ "title": "$(maptitle)", "type":"d3-maps-choropleth"}'
 	$(info Place the ID into the file $@ using the syntax ID=<ID> with <ID> being the id from the above response.)
+
+
+
+ranking:
+	grep -v Country result.csv | sort -n -t , -k 7 -r
