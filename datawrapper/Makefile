@@ -395,7 +395,8 @@ create-map: | token.inc
 	--data '{ "title": "$(maptitle)", "type":"d3-maps-choropleth"}'
 	$(info Place the ID into the file $@ using the syntax ID=<ID> with <ID> being the id from the above response.)
 
+ranking: ranking.txt
+	cat $<
 
-
-ranking:
-	grep -v Country result.csv | sort -n -t , -k 7 -r
+ranking.txt:
+	grep -v Country result.csv | sort -n -t , -k 7 -r | awk -v FS=, '{  print $$2 ": " $$7 } ' > $@
